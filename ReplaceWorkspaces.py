@@ -21,10 +21,19 @@ infoFile = reportPath + "\\ReplaceWorkspaces_" + startTime + ".txt"
 #-------------------------------------------------------------------------------------------
 # Read the parameter values:
 # 0: Workspace
+#    Valid Values: System File or Directory
 # 1: Old Workspace Path
+#    Valid Values: String
 # 2: Old Workspace Type
+#    Valid Values: ACCESS_WORKSPACE, ARCINFO_WORKSPACE, CAD_WORKSPACE, EXCEL_WORKSPACE, FILEGDB_WORKSPACE,
+#                  NONE, OLEDB_WORKSPACE, PCCOVERAGE_WORKSPACE, RASTER_WORKSPACE, SDE_WORKSPACE,
+#                  SHAPEFILE_WORKSPACE, TEXT_WORKSPACE, TIN_WORKSPACE, VPF_WORKSPACE
 # 3: New Workspace Path
+#    Valid Values: Workspace
 # 4: New Workspace Type
+#   Valid Values: ACCESS_WORKSPACE, ARCINFO_WORKSPACE, CAD_WORKSPACE, EXCEL_WORKSPACE, FILEGDB_WORKSPACE,
+#                 OLEDB_WORKSPACE, PCCOVERAGE_WORKSPACE, RASTER_WORKSPACE, SDE_WORKSPACE, SHAPEFILE_WORKSPACE,
+#                 TEXT_WORKSPACE, TIN_WORKSPACE, VPF_WORKSPACE
 workspace = arcpy.GetParameterAsText(0)
 oldPath = arcpy.GetParameterAsText(1)
 oldType = arcpy.GetParameterAsText(2)
@@ -81,7 +90,7 @@ try:
 
                                 # Update each layers definition query and label SQL query(if not a table).
                                 for lyr in brkList:
-                                        if newType == "FILEGDB_WORKSPACE":
+                                        if newType == "FILEGDB_WORKSPACE" or newType == "SDE_WORKSPACE":
                                                 brkSource = lyr.dataSource
                                                 desc = arcpy.Describe(brkSource)
                                                 if desc.DataType != "Table":
