@@ -31,7 +31,7 @@ infoFile = reportPath + "\\ReplaceWorkspaces_" + startTime + ".txt"
 # 3: New Workspace Path
 #    Valid Values: Workspace
 # 4: New Workspace Type
-#   Valid Values: ACCESS_WORKSPACE, ARCINFO_WORKSPACE, CAD_WORKSPACE, EXCEL_WORKSPACE, FILEGDB_WORKSPACE,
+#    Valid Values: ACCESS_WORKSPACE, ARCINFO_WORKSPACE, CAD_WORKSPACE, EXCEL_WORKSPACE, FILEGDB_WORKSPACE,
 #                 OLEDB_WORKSPACE, PCCOVERAGE_WORKSPACE, RASTER_WORKSPACE, SDE_WORKSPACE, SHAPEFILE_WORKSPACE,
 #                 TEXT_WORKSPACE, TIN_WORKSPACE, VPF_WORKSPACE
 workspace = arcpy.GetParameterAsText(0)
