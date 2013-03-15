@@ -21,12 +21,12 @@ infoFile = reportPath + "\\FindReplaceWorkspacePaths_" + startTime + ".txt"
 
 # ------------------------------------------------------------------------------------------
 # Read the parameter values:
-# 1: Workspace
-# 2: Find Workspace Path
-# 3: Replace Workspace Path
-Workspace = arcpy.GetParameterAsText(0)
-Find_Workspace_Path = arcpy.GetParameterAsText(1)
-Replace_Workspace_Path = arcpy.GetParameterAsText(2)
+# 1: Directory
+# 2: Old Workspace Path
+# 3: New Workspace Path
+directory = arcpy.GetParameterAsText(0)
+oldPath = arcpy.GetParameterAsText(1)
+newPath = arcpy.GetParameterAsText(2)
 
 # ------------------------------------------------------------------------------------------
 # Create output info text file.
@@ -37,20 +37,20 @@ tInfoFile.write("\n")
 tInfoFile.write("\n")
 
 # Report the process starting
-tInfoFile.write("Parameters: " + "\n" + "Workspace = " + Workspace + "\n" + "Find Workspace Path = "
-                + Find_Workspace_Path + "\n" + "Replace Workspace Path = " + Replace_Workspace_Path)
+tInfoFile.write("Parameters: " + "\n" + "Directory = " + directory + "\n" + "Old Workspace Path = "
+                + oldPath + "\n" + "New Workspace Path = " + newPath)
 tInfoFile.write("\n")
 tInfoFile.write("\n")
 tInfoFile.write("Finding Map Documents with Broken Paths...")
 tInfoFile.write("\n")
 
 # ------------------------------------------------------------------------------------------
-# Walk the directory tree starting at Workspace.
+# Walk the directory tree starting at Directory.
 # Return the root directory, subdirectories, and a list of files.
 # Find the mxds from the list of files and their full system path.
 # Get access to the mxd.
 try:
-        for root, dirs, files in os.walk(Workspace):
+        for root, dirs, files in os.walk(directory):
                 for filename in files:
                         extension = os.path.splitext(filename)
                         if extension[1] == ".mxd":
@@ -67,9 +67,14 @@ try:
                                        tInfoFile.write(brkItem.name + ", ")
                                 tInfoFile.write("\n")
 
-                                # Fix and save the mxd.
-                                mxd.findAndReplaceWorkspacePaths(Find_Workspace_Path,Replace_Workspace_Path)
-                                mxd.save()
+                                # Fix MXD
+                                mxd.findAndReplaceWorkspacePaths(oldPath,newPath)
+
+                                # Save Copy of MXD
+                                copyPath = extension[0] + "(COPY)" + extension[1]
+                                mxd.saveACopy(copyPath)
+                                tInfoFile.write("Saved Copy As: " + os.path.join(root, copyPath))
+                                tInfoFile.write("\n")
 
                                 # Find if any broken data sources remain and report to file.
                                 brkList2 = arcpy.mapping.ListBrokenDataSources(mxd)
@@ -80,14 +85,13 @@ try:
                                         tInfoFile.write("\n")
                                         tInfoFile.write("\n")
                                 else:
-                                        tInfoFile.write("Result: Fixed All Broken Data Sources")
+                                        tInfoFile.write("Result: Fixed All Broken Data Sources in " + filename)
                                         tInfoFile.write("\n")
                                         tInfoFile.write("\n")
         
 
 # ------------------------------------------------------------------------------------------
 # Write the output to the report.
-        #tInfoFile.write(arcpy.GetMessages())
         stopTime = datetime.now().strftime("%m%d%Y_%H%M%S")
         tInfoFile.write("Finished: " + stopTime)
         tInfoFile.write("\n")
@@ -95,7 +99,6 @@ try:
                 tInfoFile.close()
 except:
         # make sure to close up the filinput no matter what.
-        tInfoFile.write(arcpy.GetMessages())
-        tInfoFile.write("\n")
+        tInfoFile.write("Unknown Error. Script Did Not Complete")
         if tInfoFile:
                 tInfoFile.close()
